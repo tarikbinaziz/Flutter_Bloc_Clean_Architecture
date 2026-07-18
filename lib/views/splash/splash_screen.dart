@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc_clean/config/routes/routes_name.dart';
+import 'package:flutter_bloc_clean/services/splash/splash_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -9,6 +10,13 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  SplashServices splashServices = SplashServices();
+  @override
+  initState() {
+    super.initState();
+    splashServices.isLogin(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
