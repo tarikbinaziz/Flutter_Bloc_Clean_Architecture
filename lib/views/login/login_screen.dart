@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   builder: (context, state) {
                     return TextFormField(
                       onChanged: (value) {
-                        _loginBloc.add(EmailChanged(value));
+                        context.read<LoginBloc>().add(EmailChanged(value));
                       },
                       decoration: const InputDecoration(labelText: 'Email'),
                       validator: (value) {
@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   builder: (context, state) {
                     return TextFormField(
                       onChanged: (value) {
-                        _loginBloc.add(PasswordChanged(value));
+                        context.read<LoginBloc>().add(PasswordChanged(value));
                       },
                       decoration: const InputDecoration(labelText: 'Password'),
                       obscureText: true,
@@ -74,6 +74,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 24.0),
                 BlocListener<LoginBloc, LoginState>(
                   listener: (context, state) {
+                    // if (state.status == PostApiStatus.loading) {
+                    //   ScaffoldMessenger.of(context).showSnackBar(
+                    //     const SnackBar(content: Text('Loading...')),
+                    //   );
+                    // }
                     if (state.status == PostApiStatus.success) {
                       ScaffoldMessenger.of(
                         context,
@@ -84,15 +89,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         context,
                       ).showSnackBar(SnackBar(content: Text(state.message)));
                     }
-                    if (state.status == PostApiStatus.loading) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Loading...')),
-                      );
-                    }
                   },
                   child: BlocBuilder<LoginBloc, LoginState>(
-                    buildWhen: (previous, current) =>
-                        previous.password != current.password,
+                    // buildWhen: (previous, current) =>
+                    //     previous.status != current.status,
                     builder: (context, state) {
                       return ElevatedButton(
                         onPressed: () {
@@ -107,10 +107,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               );
                               return;
                             }
-                            _loginBloc.add(const LoginSubmitted());
+                            context.read<LoginBloc>().add(
+                              const LoginSubmitted(),
+                            );
                           }
                         },
-                        child: const Text('Login'),
+                        child: state.status == PostApiStatus.loading
+                            ? const CircularProgressIndicator()
+                            : const Text('Login'),
                       );
                     },
                   ),

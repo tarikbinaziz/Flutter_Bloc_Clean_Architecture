@@ -29,43 +29,31 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     // Handle password unfocused event if needed
   }
 
-  void onLoginSubmitted(LoginSubmitted event, Emitter<LoginState> emit) async {
-    Map<String, String> data = {
-      'email': state.email,
-      'password': state.password,
-    };
-    // Map<String, String> data = {
-    //   'email': "eve.holt@reqres.in",
-    //   'password': "pistol"
-    // };
+  Future<void> onLoginSubmitted(
+    LoginSubmitted event,
+    Emitter<LoginState> emit,
+  ) async {
+    final data = {'email': state.email, 'password': state.password};
+
     emit(state.copyWith(status: PostApiStatus.loading));
 
-    await loginRepo
-        .loginApi(data)
-        .then((val) {
-          if (val.error.isNotEmpty) {
-            emit(
-              state.copyWith(
-                status: PostApiStatus.failure,
-                message: val.error.toString(),
-              ),
-            );
-          } else {
-            emit(
-              state.copyWith(
-                status: PostApiStatus.success,
-                message: "Login Successful",
-              ),
-            );
-          }
-        })
-        .onError((error, stackTrace) {
-          emit(
-            state.copyWith(
-              status: PostApiStatus.failure,
-              message: error.toString(),
-            ),
-          );
-        });
+    try {
+      final val = await loginRepo.loginApi(data);
+
+      if (val.error.isNotEmpty) {
+        emit(state.copyWith(status: PostApiStatus.failure, message: val.error));
+      } else {
+        emit(
+          state.copyWith(
+            status: PostApiStatus.success,
+            message: "Login Successful",
+          ),
+        );
+      }
+    } catch (e) {
+      emit(
+        state.copyWith(status: PostApiStatus.failure, message: e.toString()),
+      );
+    }
   }
 }
