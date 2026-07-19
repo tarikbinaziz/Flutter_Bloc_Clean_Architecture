@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_clean/bloc/login_bloc.dart';
+import 'package:flutter_bloc_clean/main.dart';
+import 'package:flutter_bloc_clean/repository/auth/login_repo.dart';
 import 'package:flutter_bloc_clean/utils/enum.dart';
+import 'package:get_it/get_it.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   initState() {
     super.initState();
-    _loginBloc = LoginBloc();
+    _loginBloc = LoginBloc (getIt());
   }
 
   @override
