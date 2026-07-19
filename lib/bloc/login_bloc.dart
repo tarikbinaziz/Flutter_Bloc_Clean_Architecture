@@ -29,7 +29,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     // Handle password unfocused event if needed
   }
 
-  void onLoginSubmitted(LoginSubmitted event, Emitter<LoginState> emit) {
+  void onLoginSubmitted(LoginSubmitted event, Emitter<LoginState> emit) async {
     Map<String, String> data = {
       'email': state.email,
       'password': state.password,
@@ -40,21 +40,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     // };
     emit(state.copyWith(status: PostApiStatus.loading));
 
-    loginRepo
+    await loginRepo
         .loginApi(data)
         .then((val) {
           if (val.error.isNotEmpty) {
             emit(
               state.copyWith(
-                status: PostApiStatus.success,
-                message: "Login Successfully",
+                status: PostApiStatus.failure,
+                message: val.error.toString(),
               ),
             );
           } else {
             emit(
               state.copyWith(
-                status: PostApiStatus.failure,
-                message: "Login Failed",
+                status: PostApiStatus.success,
+                message: "Login Successful",
               ),
             );
           }

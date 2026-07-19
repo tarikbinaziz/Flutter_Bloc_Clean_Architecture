@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc_clean/data/exeptions/app_execption.dart';
 import 'package:flutter_bloc_clean/data/network/base_api_services.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
-
 
 /// Class for handling network API requests.
 class NetworkApiService implements BaseApiServices {
@@ -21,7 +21,9 @@ class NetworkApiService implements BaseApiServices {
     }
     dynamic responseJson;
     try {
-      final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 20));
+      final response = await http
+          .get(Uri.parse(url))
+          .timeout(const Duration(seconds: 20));
       responseJson = returnResponse(response);
     } on SocketException {
       throw NoInternetException('');
@@ -49,7 +51,13 @@ class NetworkApiService implements BaseApiServices {
 
     dynamic responseJson;
     try {
-      final Response response = await post(Uri.parse(url), body: data).timeout(const Duration(seconds: 10));
+      final Response response = await post(
+        Uri.parse(url),
+        body: data,
+        headers: <String, String>{
+          "x-api-key": "free_user_3Gf9GmrgqmnCulvioLnKLdlg7mO",
+        },
+      ).timeout(const Duration(seconds: 10));
       responseJson = returnResponse(response);
     } on SocketException {
       throw NoInternetException('No Internet Connection');
@@ -84,7 +92,9 @@ class NetworkApiService implements BaseApiServices {
       case 404:
         throw UnauthorisedException(response.body.toString());
       default:
-        throw FetchDataException('Error occurred while communicating with server');
+        throw FetchDataException(
+          'Error occurred while communicating with server',
+        );
     }
   }
 }
